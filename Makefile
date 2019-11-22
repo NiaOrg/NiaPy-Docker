@@ -22,3 +22,5 @@ remove:
 
 clean:
 	docker image rm niapyorg
+
+cleanall: stop remove clean

@@ -5,8 +5,9 @@ LABEL maintainer="Klemen Berkovic <klemen.berkovic1@um.si>"
 
 ARG GIT_BRANCH="development"
 ARG NB_USER="jovyan"
-ARG NB_UID="1000"
-ARG NB_GID="100"
+ARG NB_UID=1000
+ARG NB_GROUP="jovyan"
+ARG NB_GID=1000
 ARG NB_PASSWORD="test1234"
 ARG NB_PORT=9999
 
@@ -26,8 +27,10 @@ RUN sed -i 's/^#force_color_prompt=yes/force_color_prompt=yes/' /etc/skel/.bashr
 # Add script
 ADD fix-permissions /usr/local/bin/fix-permissions
 RUN chmod a+rx /usr/local/bin/fix-permissions
+COPY createuser.sh .
+RUN chmod a+rx createuser.sh
 RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
-    useradd -c 'User for runing jupyter notebooks' -k /etc/skel -s /bin/bash -md $HOME -N -u $NB_UID -g $NB_GID $NB_USER && \
+    ./createuser.sh $NB_USER $NB_UID $NB_GROUP $NB_GID $HOME && \
     chmod g+w /etc/passwd && \
     fix-permissions $HOME
 # Add stings for jupyter
@@ -42,11 +45,11 @@ USER $NB_UID
 WORKDIR $HOME
 
 # Get and buld NiaPy
-RUN git clone https://github.com/kb2623/NiaPy.git -b $GIT_BRANCH
-RUN cd NiaPy && make build && cd ..
+#RUN git clone https://github.com/kb2623/NiaPy.git -b $GIT_BRANCH
+#RUN cd NiaPy && make build && cd ..
 # Get and buld NiaPy-examples and run jupyter lab
-RUN git clone https://github.com/kb2623/NiaPy-examples.git -b $GIT_BRANCH
-RUN cd NiaPy-examples && make install
+#RUN git clone https://github.com/kb2623/NiaPy-examples.git -b $GIT_BRANCH
+#RUN cd NiaPy-examples && make install
 
 USER $NB_UID
 # Set working directory for runing
