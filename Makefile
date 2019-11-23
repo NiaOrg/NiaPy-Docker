@@ -14,6 +14,11 @@ NIAORG_UID:=1001
 NIAORG_GROUP:=jovyan
 NIAORG_GID:=1001
 
+NIAORG_NETWORK_NAME=mynet123
+NIAORG_NETWORK:=164.8.230.0
+NIAORG_NETWORK_MASK:=24
+NIAORG_NETWORK_IP:=164.8.230.100
+
 sslkey:
 	openssl genrsa -des3 -out NiaOrgImage/${SSL_KEY}_lock.key 2048
 	openssl rsa -in NiaOrgImage/${SSL_KEY}_lock.key -out NiaOrgImage/${SSL_KEY}.key
@@ -35,7 +40,7 @@ build:
 	-make buildNiaorg
 
 makenet:
-	docker network create --subnet=164.8.230.0/24 mynet123
+	docker network create --subnet=${NIAORG_NETWORK}/${NIAORG_NETWORK_MASK} ${NIAORG_NETWORK_NAME}
 
 runPipenv:
 	-make buildPipenv
@@ -48,8 +53,8 @@ runNet:
 	-make build
 	-make makenet
 	docker run --name niapyorg-server \
-		--net mynet123 \
-		--ip 164.8.230.100 \
+		--net ${NIAORG_NETWORK_NAME} \
+		--ip ${NIAORG_NETWORK_IP} \
 		-p ${NIAORG_IP}:${NIAORG_SORCE_PORT}:${NIAORG_DESTINATION_PORT} \
 		-d niapyorg:${NIAORG_TAG}
 
