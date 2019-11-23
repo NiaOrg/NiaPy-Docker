@@ -1,8 +1,4 @@
 ARG BASE_CONTAINER=debian:latest
-FROM $BASE_CONTAINER
-
-LABEL maintainer="Klemen Berkovic <klemen.berkovic1@um.si>"
-
 ARG GIT_BRANCH="development"
 ARG NB_USER="jovyan"
 ARG NB_UID=1000
@@ -10,6 +6,14 @@ ARG NB_GROUP="jovyan"
 ARG NB_GID=1000
 ARG NB_PASSWORD="test1234"
 ARG NB_PORT=9999
+
+FROM $BASE_CONTAINER
+
+LABEL tags="python, microframework, nature-inspired-algorithms, swarm-intelligence, optimization-algorithms"
+LABEL maintainer="Klemen Berkovic <roxor@gmail.com>"
+LABEL github="https://github.com/NiaOrg"
+LABEL github-docker="https://github.com/NiaOrg/NiaPy-Docker"
+LABEL description="Nature-inspired algorithms are a very popular tool for solving optimization problems. Numerous variants of nature-inspired algorithms have been developed since the beginning of their era. To prove their versatility, those were tested in various domains on various applications, especially when they are hybridized, modified or adapted. However, implementation of nature-inspired algorithms is sometimes a difficult, complex and tedious task. In order to break this wall, NiaPy is intended for simple and quick use, without spending time for implementing algorithms from scratch."
 
 ENV HOME=/home/$NB_USER
 
@@ -45,11 +49,11 @@ USER $NB_UID
 WORKDIR $HOME
 
 # Get and buld NiaPy
-#RUN git clone https://github.com/kb2623/NiaPy.git -b $GIT_BRANCH
-#RUN cd NiaPy && make build && cd ..
+RUN git clone https://github.com/kb2623/NiaPy.git -b $GIT_BRANCH
+RUN cd NiaPy && make build && cd ..
 # Get and buld NiaPy-examples and run jupyter lab
-#RUN git clone https://github.com/kb2623/NiaPy-examples.git -b $GIT_BRANCH
-#RUN cd NiaPy-examples && make install
+RUN git clone https://github.com/kb2623/NiaPy-examples.git -b $GIT_BRANCH
+RUN cd NiaPy-examples && make install
 
 USER $NB_UID
 # Set working directory for runing

@@ -10,11 +10,13 @@ fi
 if id -u "$USERID" >/dev/null 2>&1; then
 	userdel -r $USERID
 fi
-if id -u "$GROUP" >/dev/null 2>&1; then
+if id -g "$GROUP" >/dev/null 2>&1; then
 	groupdel $GROUP
 fi
-if id -u "$GROUPID" >/dev/null 2>&1; then
+if id -g "$GROUPID" >/dev/null 2>&1; then
 	groupdel $GROUPID
 fi
 groupadd -g $GROUPID $GROUP
-useradd -c 'Jupyter notebook user' -k /etc/skel -s /bin/bash -md $HOME -N -u $USERID -g $GROUPID $USER 
+useradd -u $USERID -g $GROUPID -s /bin/bash -d $HOME -k /etc/skel -m -c 'Jupyter notebook user' -N $USER 
+cp -rn /etc/skel/* $HOME
+chown -r $USER.$GROUP $HOME
