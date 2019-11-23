@@ -6,15 +6,15 @@ PIPENV_TAG:=latest
 NIAORG_TAG:=latest
 NIAORG_ARG:=BASE_CONTAINER=pipenv:${PIPENV_TAG}
 NIAORG_IP:=164.8.230.37
-NIAORG_SORCE_PORT=9999
-NIAORG_DESTINATION_PORT=9999
+NIAORG_SORCE_PORT:=9999
+NIAORG_DESTINATION_PORT:=9999
 NIAORG_PASSWORD:=test1234
 NIAORG_USER:=jovyan
 NIAORG_UID:=1001
 NIAORG_GROUP:=jovyan
 NIAORG_GID:=1001
 
-NIAORG_NETWORK_NAME=mynet123
+NIAORG_NETWORK_NAME:=mynet123
 NIAORG_NETWORK:=164.8.230.0
 NIAORG_NETWORK_MASK:=24
 NIAORG_NETWORK_IP:=164.8.230.100
@@ -32,7 +32,7 @@ sslclean:
 buildPipenv: PipenvImage/Dockerfile PipenvImage/fix-permissions PipenvImage/.tmux.conf PipenvImage/.basic.tmuxtheme
 	docker build -t pipenv:${PIPENV_TAG} PipenvImage
 
-buildNiaorg: NiaOrgImage/Dockerfile
+buildNiaorg: NiaOrgImage/Dockerfile NiaOrgImage/${SSL_KEY}.key NiaOrgImage/${SSL_PEM}.pem NiaOrgImage/createuser.sh NiaOrgImage/jupyter_notebook_config.py
 	-make buildPipenv 
 	docker build -t niapyorg:${NIAORG_TAG} --build-arg ${NIAORG_ARG} --build-arg NB_PORT=${NIAORG_DESTINATION_PORT} --build-arg NB_KEY=${SSL_KEY} --build-arg NB_PEM=${SSL_PEM} --build-arg NB_PASSWORD=${NIAORG_PASSWORD} --build-arg NB_USER=${NIAORG_USER} --build-arg NB_UID=${NIAORG_UID} --build-arg NB_GROUP=${NIAORG_GROUP} --build-arg NB_GID=${NIAORG_GID} NiaOrgImage
 
