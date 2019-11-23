@@ -15,9 +15,14 @@ NIAORG_GROUP:=jovyan
 NIAORG_GID:=1001
 
 sslkey:
-	openssl genrsa -des3 -out PipenvImage/${SSL_KEY}_lock.key 2048
-	openssl rsa -in PipenvImage/${SSL_KEY}_lock.key -out PipenvImage/${SSL_KEY}.key
-	openssl req -x509 -new -nodes -key PipenvImage/${SSL_KEY}.key -sha256 -days 1024 -out ${SSL_PEM}.pem
+	openssl genrsa -des3 -out NiaOrgImage/${SSL_KEY}_lock.key 2048
+	openssl rsa -in NiaOrgImage/${SSL_KEY}_lock.key -out NiaOrgImage/${SSL_KEY}.key
+	openssl req -x509 -new -nodes -key NiaOrgImage/${SSL_KEY}.key -sha256 -days 1024 -out NiaOrgImage/${SSL_PEM}.pem
+
+sslclean:
+	-rm NiaOrgImage/${SSL_KEY}_lock.key
+	-rm NiaOrgImage/${SSL_KEY}.key
+	-rm NiaOrgImage/${SSL_PEM}.pem
 
 buildPipenv: PipenvImage/Dockerfile PipenvImage/fix-permissions PipenvImage/.tmux.conf PipenvImage/.basic.tmuxtheme
 	docker build -t pipenv:${PIPENV_TAG} PipenvImage
