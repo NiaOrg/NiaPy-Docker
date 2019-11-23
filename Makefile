@@ -1,3 +1,5 @@
+HOST_INTERFACE=enp96s0f0
+
 SSL_KEY:=jupyter_server
 SSL_PEM:=jupyter_cert
 
@@ -15,8 +17,8 @@ NIAORG_GROUP:=jovyan
 NIAORG_GID:=1001
 
 NIAORG_NETWORK_NAME:=mynet123
-NIAORG_NETWORK:=164.8.230.0
-NIAORG_NETWORK_MASK:=24
+NIAORG_NETWORK_GW:=164.8.230.1
+NIAORG_NETWORK_SUBNET:=164.8.230.0/24
 NIAORG_NETWORK_IP:=164.8.230.100
 
 sslkey:
@@ -39,8 +41,13 @@ buildNiaorg: NiaOrgImage/Dockerfile NiaOrgImage/${SSL_KEY}.key NiaOrgImage/${SSL
 build:
 	-make buildNiaorg
 
-makenet:
-	docker network create --subnet=${NIAORG_NETWORK}/${NIAORG_NETWORK_MASK} ${NIAORG_NETWORK_NAME}
+createnet:
+	docker network create \
+		-d macvlan \
+		--subnet=${NIAORG_NETWORK_SUBNET} \
+		--gateway ${NIAORG_NETWORK_GW} \
+		-o parent=${HOST_INTERFACE} \
+		${NIAORG_NETWORK_NAME}
 
 runPipenv:
 	-make buildPipenv
@@ -49,13 +56,13 @@ runPipenv:
 		pipenv:${PIPENV_TAG} \
 		/bin/bash
 
-runNet:
+runnet:
 	-make build
 	-make makenet
-	docker run --name niapyorg-server \
-		--net ${NIAORG_NETWORK_NAME} \
-		--ip ${NIAORG_NETWORK_IP} \
-		-p ${NIAORG_IP}:${NIAORG_SORCE_PORT}:${NIAORG_DESTINATION_PORT} \
+	docker run --name=niapyorg-server \
+		--network=${NIAORG_NETWORK_NAME} \
+		--ip=${NIAORG_NETWORK_IP} \
+		-p ${NIAORG_SORCE_PORT}:${NIAORG_DESTINATION_PORT} \
 		-d niapyorg:${NIAORG_TAG}
 
 run:
