@@ -34,12 +34,24 @@ buildNiaorg: NiaOrgImage/Dockerfile
 build:
 	-make buildNiaorg
 
+makenet:
+	docker network create --subnet=164.8.230.0/24 mynet123
+
 runPipenv:
 	-make buildPipenv
 	docker run -it \
 		--name pipenv-server \
 		pipenv:${PIPENV_TAG} \
 		/bin/bash
+
+runNet:
+	-make build
+	-make makenet
+	docker run --name niapyorg-server \
+		--net mynet123 \
+		--ip 164.8.230.100 \
+		-p ${NIAORG_IP}:${NIAORG_SORCE_PORT}:${NIAORG_DESTINATION_PORT} \
+		-d niapyorg:${NIAORG_TAG}
 
 run:
 	-make build
