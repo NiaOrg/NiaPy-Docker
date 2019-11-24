@@ -7,18 +7,18 @@ LABEL github="https://github.com/NiaOrg"
 LABEL github-docker="https://github.com/NiaOrg/NiaPy-Docker"
 LABEL description="Nature-inspired algorithms are a very popular tool for solving optimization problems. Numerous variants of nature-inspired algorithms have been developed since the beginning of their era. To prove their versatility, those were tested in various domains on various applications, especially when they are hybridized, modified or adapted. However, implementation of nature-inspired algorithms is sometimes a difficult, complex and tedious task. In order to break this wall, NiaPy is intended for simple and quick use, without spending time for implementing algorithms from scratch."
 
-ARG GIT_BRANCH="development"
-ARG NB_USER="jovyan"
+ARG GIT_BRANCH="master"
+ARG NB_USER="niapy"
 ARG NB_UID=1001
-ARG NB_GROUP="jovyan"
+ARG NB_GROUP="niapy"
 ARG NB_GID=1001
-ARG NB_PASSWORD="test1234"
+ARG NB_PASSWORD="niapy4132"
 ARG NB_PORT=9999
 ARG NB_KEY=jupyter_server
 ARG NB_PEM=jupyter_cert
 ENV NB_HOME=/home/$NB_USER
-ENV NIA_GIT=https://github.com/kb2623/NiaPy.git
-ENV NIA_EXAMPLES_GIT=https://github.com/kb2623/NiaPy-examples.git
+ENV NIA_GIT=https://github.com/NiaOrg/NiaPy.git
+ENV NIA_EXAMPLES_GIT=https://github.com/NiaOrg/NiaPy-examples.git
 
 USER root
 WORKDIR /root
