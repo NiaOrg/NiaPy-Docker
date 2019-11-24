@@ -13,7 +13,6 @@ WORKDIR /root
 RUN apt update
 # Install needed programs
 RUN apt install -y git make vim vifm tmux && apt install -y virtualenv && apt install -y pipenv
-RUN pip3 install jupyterlab
 # Add script
 ADD fix-permissions /usr/local/bin/fix-permissions
 RUN chmod a+rx /usr/local/bin/fix-permissions
@@ -22,6 +21,7 @@ RUN [ -e /etc/skel/.bashrc ] && rm /etc/skel/.bashrc
 ADD .bashrc /etc/skel
 ADD .tmux.conf /etc/skel
 ADD .basic.tmuxtheme /etc/skel
-RUN echo 'export SHELL=/bin/bash' >> /etc/skel/.profile
+RUN [ -e /etc/skel/.profile ] && rm /etc/skel/.profile
+ADD .profile /etc/skel
 
 CMD /bin/bash
