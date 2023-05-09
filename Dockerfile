@@ -28,7 +28,7 @@ RUN curl https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VER
 RUN ./configure --prefix=/usr/local --enable-optimizations --enable-ipv6 && make -j$(nproc) \
  && make install
 RUN cd /opt \
- && rm -f /opt/Python-${PYTHON_VERSION}.tar.xz \
+ && rm -f /opt/Python-${PYTHON_VERSION}.tgz \
  && rm -rf /opt/Python-${PYTHON_VERSION}
 
 ## Install additional programs
