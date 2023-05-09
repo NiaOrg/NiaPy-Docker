@@ -7,6 +7,7 @@ LABEL github="https://github.com/NiaOrg"
 LABEL github-docker="https://github.com/NiaOrg/NiaPy-Docker"
 LABEL description="Nature-inspired algorithms are a very popular tool for solving optimization problems. Numerous variants of nature-inspired algorithms have been developed since the beginning of their era. To prove their versatility, those were tested in various domains on various applications, especially when they are hybridized, modified or adapted. However, implementation of nature-inspired algorithms is sometimes a difficult, complex and tedious task. In order to break this wall, NiaPy is intended for simple and quick use, without spending time for implementing algorithms from scratch."
 
+ARG DEV=0
 ARG PYTHON_VERSION_MAJOR=3
 ARG PYTHON_VERSION_MINOR_FIRST=11
 ARG PYTHON_VERSION_MINOR_SECOND=0
@@ -35,9 +36,7 @@ RUN cd /opt \
 RUN apt update \
  && apt install -y git graphviz pandoc software-properties-common
 # NeoVim
-RUN add-apt-repository ppa:neovim-ppa/unstable \
- && apt update \
- && apt install -y neovim
+RUN if [[ $DEV -eq 1 ]]; then add-apt-repository ppa:neovim-ppa/unstable && apt update && apt install -y neovim; fi
 # Python pip
 RUN /usr/local/bin/pip${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR_FIRST} install --upgrade pip \
  && /usr/local/bin/pip${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR_FIRST} install --upgrade pipenv
@@ -45,7 +44,7 @@ RUN /usr/local/bin/pip${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR_FIRST} inst
 ## Install NiaPy
 RUN git clone https://github.com/NiaOrg/NiaPy.git /opt/NiaPy \
  && cd /opt/NiaPy \
- && make
+ && if [[ $DEV -eq 1 ]]; then pipenv install --system --dev; else pipenv install --system; fi
 # TODO
 
 ## Set default programs
@@ -55,9 +54,10 @@ RUN update-alternatives --install /usr/bin/python python /usr/local/bin/python${
 RUN update-alternatives --install /usr/bin/python${PYTHON_VERSION_MAJOR} python${PYTHON_VERSION_MAJOR} /usr/local/bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR_FIRST} 0 \
  && update-alternatives --config python${PYTHON_VERSION_MAJOR}
 # Pip
-RUN update-alternatives --install /usr/bin/pip pip /usr/local/bin/pip${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR_FIRST} 0 \
- && update-alternatives --config pip
-RUN update-alternatives --install /usr/bin/pip${PYTHON_VERSION_MAJOR} pip${PYTHON_VERSION_MAJOR} /usr/local/bin/pip${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR_FIRST} 0 \
- && update-alternatives --config pip${PYTHON_VERSION_MAJOR}
+RUN if [[ $DEV -eq 1 ]]; then update-alternatives --install /usr/bin/pip pip /usr/local/bin/pip${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR_FIRST} 0 && update-alternatives --config pip; \
+    update-alternatives --install /usr/bin/pip${PYTHON_VERSION_MAJOR} pip${PYTHON_VERSION_MAJOR} /usr/local/bin/pip${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR_FIRST} 0 && update-alternatives --config pip${PYTHON_VERSION_MAJOR}; \
+ fi
+# Neovim
+
 
 CMD /bin/bash
