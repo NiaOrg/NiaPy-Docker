@@ -33,7 +33,7 @@ RUN cd /opt \
 
 ## Install additional programs
 RUN apt update \
- && apt install -y git software-properties-common
+ && apt install -y git graphviz pandoc software-properties-common
 # NeoVim
 RUN add-apt-repository ppa:neovim-ppa/unstable \
  && apt update \
@@ -44,7 +44,8 @@ RUN /usr/local/bin/pip${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR_FIRST} inst
 
 ## Install NiaPy
 RUN git clone https://github.com/NiaOrg/NiaPy.git /opt/NiaPy \
- && cd /opt/NiaPy
+ && cd /opt/NiaPy \
+ && make
 # TODO
 
 ## Set default programs
